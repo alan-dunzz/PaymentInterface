@@ -7,18 +7,13 @@ import androidx.annotation.StringRes
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
-import androidx.compose.foundation.layout.IntrinsicSize
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
-import androidx.compose.foundation.layout.fillMaxHeight
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
-import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.width
-import androidx.compose.foundation.layout.wrapContentHeight
-import androidx.compose.foundation.layout.wrapContentWidth
 import androidx.compose.foundation.text.KeyboardOptions
 import androidx.compose.material3.Button
 import androidx.compose.material3.DropdownMenu
@@ -46,7 +41,6 @@ import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.input.ImeAction
 import androidx.compose.ui.text.input.KeyboardType
-import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
@@ -72,7 +66,7 @@ class MainActivity : ComponentActivity() {
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
-fun TopBar(@StringRes title:Int, modifier: Modifier=Modifier) {
+fun TopBar(@StringRes title:Int) {
     TopAppBar(
         title = { Text(
             text = stringResource(id = title),
@@ -82,11 +76,6 @@ fun TopBar(@StringRes title:Int, modifier: Modifier=Modifier) {
         ) },
         colors = TopAppBarDefaults.topAppBarColors(containerColor = Color.Blue)
     )
-}
-
-@Composable
-fun CreditCards(){
-    //List with Visa, MasterCard, American Express
 }
 
 @Composable
@@ -167,13 +156,13 @@ fun SelectCard(){
     }
 }
 
-fun Verify(){
+fun pay(){
     
 }
 
 @Composable
 fun Content(modifier: Modifier){
-    var card_num_input by remember {
+    var input by remember {
         mutableStateOf("")
     }
     val total= Random.nextInt(100,5000)
@@ -203,8 +192,8 @@ fun Content(modifier: Modifier){
                 keyboardType = KeyboardType.Number,
                 imeAction = ImeAction.Done
             ),
-            value = card_num_input,
-            onValueChanged = {card_num_input=it},
+            value = input,
+            onValueChanged = {input=it},
             modifier=modifier.fillMaxWidth())
         Spacer(modifier = Modifier.height(20.dp))
         Row(
@@ -216,16 +205,16 @@ fun Content(modifier: Modifier){
                     keyboardType = KeyboardType.Number,
                     imeAction = ImeAction.Done
                 ),
-                value = card_num_input,
-                onValueChanged = {card_num_input=it},
+                value = input,
+                onValueChanged = {input=it},
                 modifier = Modifier.width(150.dp))
             CardNumber(label = R.string.CVV,
                 keyboardsOptions = KeyboardOptions.Default.copy(
                     keyboardType = KeyboardType.Number,
                     imeAction = ImeAction.Done
                 ),
-                value = card_num_input,
-                onValueChanged = {card_num_input=it},
+                value = input,
+                onValueChanged = {input=it},
                 modifier = Modifier.width(150.dp))
         }
 
@@ -239,8 +228,8 @@ fun Content(modifier: Modifier){
                 keyboardType = KeyboardType.Number,
                 imeAction = ImeAction.Done
             ),
-            value = card_num_input,
-            onValueChanged = {card_num_input=it},
+            value = input,
+            onValueChanged = {input=it},
             modifier = Modifier.fillMaxWidth())
 
         Spacer(modifier = Modifier.height(22.dp))
@@ -253,8 +242,8 @@ fun Content(modifier: Modifier){
                 keyboardType = KeyboardType.Number,
                 imeAction = ImeAction.Done
             ),
-            value = card_num_input,
-            onValueChanged = {card_num_input=it},
+            value = input,
+            onValueChanged = {input=it},
             modifier = Modifier.fillMaxWidth()
                 //.size(100.dp,20.dp)
         )
@@ -264,7 +253,7 @@ fun Content(modifier: Modifier){
             horizontalArrangement = Arrangement.Center
         ){
                 Button(
-                    onClick = {Verify()},
+                    onClick = {pay()},
                     modifier=Modifier.padding(vertical=5.dp)
                 ) {
                     Text(
@@ -278,7 +267,7 @@ fun Content(modifier: Modifier){
 }
 
 @Composable
-fun Payment( modifier: Modifier = Modifier) {
+fun Payment() {
     Scaffold (
         topBar = {TopBar(R.string.title)}
     ){
