@@ -1,0 +1,14 @@
+<resources>
+    <string name="app_name">Ejercicio 1 CM</string>
+    <string name="title">Información de pago\n</string>
+    <string name="select">Selecciona el método de pago:</string>
+    <string name="card_num">Número de la tarjeta</string>
+    <string name="CVV">***</string>
+    <string name="date">MM/YY</string>
+    <string name="contact">Información de contacto\n</string>
+    <string name="mail">example@mail.com\n</string>
+    <string name="proceed">Realizar pago\n</string>
+    <string name="total">Total a pagar:\n</string>
+    <string name="nameinfo">Nombre</string>
+    <string name="name">Nombre en la tarjeta</string>
+</resources>
