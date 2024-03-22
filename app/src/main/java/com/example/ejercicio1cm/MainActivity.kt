@@ -13,7 +13,9 @@ import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.width
+import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.foundation.text.KeyboardOptions
 import androidx.compose.material3.Button
 import androidx.compose.material3.DropdownMenu
@@ -31,6 +33,7 @@ import androidx.compose.material3.TopAppBar
 import androidx.compose.material3.TopAppBarDefaults
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
+import androidx.compose.runtime.mutableFloatStateOf
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
@@ -74,7 +77,7 @@ fun TopBar(@StringRes title:Int) {
             color = Color.White,
             fontWeight = FontWeight.SemiBold
         ) },
-        colors = TopAppBarDefaults.topAppBarColors(containerColor = Color.Blue)
+        colors = TopAppBarDefaults.topAppBarColors(containerColor = Color.Blue),
     )
 }
 
@@ -95,7 +98,8 @@ private fun TextBox(
         singleLine = true,
         keyboardOptions = keyboardsOptions,
         onValueChange = onValueChanged,
-        modifier=modifier
+        modifier=modifier,
+        shape= RoundedCornerShape(12.dp)
     )
 
 }
@@ -114,7 +118,7 @@ fun SelectCard(){
     ) {
         ExposedDropdownMenuBox(
             expanded = isExpanded,
-            onExpandedChange = { isExpanded = it }
+            onExpandedChange = { isExpanded = it },
         ) {
             TextField(
                 value = card,
@@ -123,7 +127,7 @@ fun SelectCard(){
                 trailingIcon = {
                     ExposedDropdownMenuDefaults.TrailingIcon(expanded = isExpanded)
                 },
-                colors = ExposedDropdownMenuDefaults.textFieldColors(),
+                colors = ExposedDropdownMenuDefaults.outlinedTextFieldColors(),
                 modifier = Modifier.menuAnchor()
             )
             DropdownMenu(
@@ -178,7 +182,7 @@ fun Content(modifier: Modifier){
         mutableStateOf("")
     }
     val total by remember{
-        mutableStateOf(Random.nextInt(100,5000)+Random.nextInt(0,100).toFloat()/100)
+        mutableFloatStateOf(Random.nextInt(100,5000)+Random.nextInt(0,100).toFloat()/100)
     }
     Column(
         modifier = modifier.padding(20.dp)
@@ -224,7 +228,7 @@ fun Content(modifier: Modifier){
                 modifier = Modifier.width(150.dp))
             TextBox(label = R.string.CVV,
                 keyboardsOptions = KeyboardOptions.Default.copy(
-                    keyboardType = KeyboardType.NumberPassword,
+                    keyboardType = KeyboardType.Number,
                     imeAction = ImeAction.Done
                 ),
                 value = cardCVV,
@@ -258,8 +262,9 @@ fun Content(modifier: Modifier){
             ),
             value = email,
             onValueChanged = {email=it},
-            modifier = Modifier.fillMaxWidth()
-                //.size(100.dp,20.dp)
+            modifier = Modifier
+                .fillMaxWidth()
+                .size(50.dp)
         )
         //Spacer(modifier = Modifier.height(90.dp))
         Row(
@@ -268,7 +273,8 @@ fun Content(modifier: Modifier){
         ){
                 Button(
                     onClick = {pay()},
-                    modifier=Modifier.padding(vertical=5.dp)
+                    modifier=Modifier.padding(vertical=35.dp)
+                        .size(210.dp,50.dp)
                 ) {
                     Text(
                         stringResource(id = R.string.proceed),
