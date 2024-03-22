@@ -79,7 +79,7 @@ fun TopBar(@StringRes title:Int) {
 }
 
 @Composable
-private fun CardNumber(
+private fun TextBox(
     @StringRes label: Int,
     keyboardsOptions: KeyboardOptions,
     value: String,
@@ -162,10 +162,24 @@ fun pay(){
 
 @Composable
 fun Content(modifier: Modifier){
-    var input by remember {
+    var cardNum by remember {
         mutableStateOf("")
     }
-    val total= Random.nextInt(100,5000)
+    var cardDate by remember {
+        mutableStateOf("")
+    }
+    var cardCVV by remember {
+        mutableStateOf("")
+    }
+    var cardName by remember {
+        mutableStateOf("")
+    }
+    var email by remember {
+        mutableStateOf("")
+    }
+    val total by remember{
+        mutableStateOf(Random.nextInt(100,5000)+Random.nextInt(0,100).toFloat()/100)
+    }
     Column(
         modifier = modifier.padding(20.dp)
     ){
@@ -187,34 +201,34 @@ fun Content(modifier: Modifier){
             modifier= Modifier.padding(vertical=10.dp)
         )
         SelectCard()
-        CardNumber(label = R.string.card_num,
+        TextBox(label = R.string.card_num,
             keyboardsOptions = KeyboardOptions.Default.copy(
                 keyboardType = KeyboardType.Number,
                 imeAction = ImeAction.Done
             ),
-            value = input,
-            onValueChanged = {input=it},
+            value = cardNum,
+            onValueChanged = {cardNum=it},
             modifier=modifier.fillMaxWidth())
         Spacer(modifier = Modifier.height(20.dp))
         Row(
             modifier = Modifier.fillMaxWidth(),
             horizontalArrangement = Arrangement.SpaceBetween
         ){
-            CardNumber(label = R.string.date,
+            TextBox(label = R.string.date,
                 keyboardsOptions = KeyboardOptions.Default.copy(
                     keyboardType = KeyboardType.Number,
                     imeAction = ImeAction.Done
                 ),
-                value = input,
-                onValueChanged = {input=it},
+                value = cardDate,
+                onValueChanged = {cardDate=it},
                 modifier = Modifier.width(150.dp))
-            CardNumber(label = R.string.CVV,
+            TextBox(label = R.string.CVV,
                 keyboardsOptions = KeyboardOptions.Default.copy(
-                    keyboardType = KeyboardType.Number,
+                    keyboardType = KeyboardType.NumberPassword,
                     imeAction = ImeAction.Done
                 ),
-                value = input,
-                onValueChanged = {input=it},
+                value = cardCVV,
+                onValueChanged = {cardCVV=it},
                 modifier = Modifier.width(150.dp))
         }
 
@@ -223,13 +237,13 @@ fun Content(modifier: Modifier){
             text = stringResource(id = R.string.nameinfo),
             fontSize=18.sp
         )
-        CardNumber(label = R.string.name,
+        TextBox(label = R.string.name,
             keyboardsOptions = KeyboardOptions.Default.copy(
-                keyboardType = KeyboardType.Number,
+                keyboardType = KeyboardType.Text,
                 imeAction = ImeAction.Done
             ),
-            value = input,
-            onValueChanged = {input=it},
+            value = cardName,
+            onValueChanged = {cardName=it},
             modifier = Modifier.fillMaxWidth())
 
         Spacer(modifier = Modifier.height(22.dp))
@@ -237,13 +251,13 @@ fun Content(modifier: Modifier){
             text = stringResource(id = R.string.contact),
             fontSize=18.sp,
         )
-        CardNumber(label = R.string.mail,
+        TextBox(label = R.string.mail,
             keyboardsOptions = KeyboardOptions.Default.copy(
-                keyboardType = KeyboardType.Number,
+                keyboardType = KeyboardType.Email,
                 imeAction = ImeAction.Done
             ),
-            value = input,
-            onValueChanged = {input=it},
+            value = email,
+            onValueChanged = {email=it},
             modifier = Modifier.fillMaxWidth()
                 //.size(100.dp,20.dp)
         )
