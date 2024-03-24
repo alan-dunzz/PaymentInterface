@@ -11,4 +11,11 @@
     <string name="total">Total a pagar:\n</string>
     <string name="nameinfo">Nombre</string>
     <string name="name">Nombre en la tarjeta</string>
+    <string name="credit_card_rd">Tarjeta de crédito</string>
+    <string name="success">Pago exitoso</string>
+    <string name="number_fail">Número de tarjeta inválido</string>
+    <string name="email_fail">e mail inválido</string>
+    <string name="cvv_fail">CVV inválido</string>
+    <string name="name_fail">Nombre inválido</string>
+    <string name="error">Ocurrió un error</string>
 </resources>

@@ -1,9 +1,13 @@
 package com.example.ejercicio1cm
 
+import android.content.Context
 import android.os.Bundle
+import android.util.Patterns
+import android.widget.Toast
 import androidx.activity.ComponentActivity
 import androidx.activity.compose.setContent
 import androidx.annotation.StringRes
+import androidx.compose.foundation.Image
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
@@ -15,6 +19,7 @@ import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.width
+import androidx.compose.foundation.layout.wrapContentSize
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.foundation.text.KeyboardOptions
 import androidx.compose.material3.Button
@@ -25,6 +30,7 @@ import androidx.compose.material3.ExposedDropdownMenuBox
 import androidx.compose.material3.ExposedDropdownMenuDefaults
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.OutlinedTextField
+import androidx.compose.material3.RadioButton
 import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Surface
 import androidx.compose.material3.Text
@@ -40,6 +46,8 @@ import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.platform.LocalContext
+import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.input.ImeAction
@@ -98,8 +106,9 @@ private fun TextBox(
         singleLine = true,
         keyboardOptions = keyboardsOptions,
         onValueChange = onValueChanged,
-        modifier=modifier,
-        shape= RoundedCornerShape(12.dp)
+        modifier=modifier.fillMaxWidth(),
+        shape= RoundedCornerShape(12.dp),
+
     )
 
 }
@@ -113,59 +122,107 @@ fun SelectCard(){
     var card by remember {
         mutableStateOf("")
     }
-    Box(
-        contentAlignment = Alignment.Center
+    Row(
+        verticalAlignment = Alignment.CenterVertically,
+        modifier=Modifier.padding(vertical = 10.dp)
     ) {
-        ExposedDropdownMenuBox(
-            expanded = isExpanded,
-            onExpandedChange = { isExpanded = it },
+        RadioButton(
+            selected = true,
+            onClick = {},
+        )
+        Text(
+            text = stringResource(R.string.credit_card_rd),
+            fontSize = 18.sp,
+            fontWeight = FontWeight.Bold,
+            color= Color(0,0,110)
+        )
+        Box(
+            contentAlignment = Alignment.Center
         ) {
-            TextField(
-                value = card,
-                onValueChange = {},
-                readOnly = true,
-                trailingIcon = {
-                    ExposedDropdownMenuDefaults.TrailingIcon(expanded = isExpanded)
-                },
-                colors = ExposedDropdownMenuDefaults.outlinedTextFieldColors(),
-                modifier = Modifier.menuAnchor()
-            )
-            DropdownMenu(
+            ExposedDropdownMenuBox(
                 expanded = isExpanded,
-                onDismissRequest = { isExpanded = false }
+                onExpandedChange = { isExpanded = it },
+                modifier=Modifier.size(160.dp,50.dp)
             ) {
-                DropdownMenuItem(
-                    text = { Text(text = "Visa") },
-                    onClick = {
-                        card = "Visa"
-                        isExpanded = false
-                    }
+                TextField(
+                    value = card,
+                    onValueChange = {},
+                    readOnly = true,
+                    trailingIcon = {
+                        ExposedDropdownMenuDefaults.TrailingIcon(expanded = isExpanded)
+                    },
+                    colors = ExposedDropdownMenuDefaults.outlinedTextFieldColors(),
+                    modifier = Modifier.menuAnchor()
                 )
-                DropdownMenuItem(
-                    text = { Text(text = "MasterCard") },
-                    onClick = {
-                        card = "MasterCard"
-                        isExpanded = false
-                    }
-                )
-                DropdownMenuItem(
-                    text = { Text(text = "American Express") },
-                    onClick = {
-                        card = "American Express"
-                        isExpanded = false
-                    }
-                )
+                DropdownMenu(
+                    expanded = isExpanded,
+                    onDismissRequest = { isExpanded = false }
+                ) {
+                    DropdownMenuItem(
+                        text = { Text(text = "Visa") },
+                        onClick = {
+                            card = "Visa"
+                            isExpanded = false
+                        }
+                        //{painterResource(id = R.drawable.visa) }
+                    )
+                    DropdownMenuItem(
+                        text = { Text(text = "MasterCard") },
+                        onClick = {
+                            card = "MasterCard"
+                            isExpanded = false
+                        }
+                    )
+                    DropdownMenuItem(
+                        text = { Text(text = "American Express") },
+                        onClick = {
+                            card = "Amex"
+                            isExpanded = false
+                        }
+                    )
+                }
             }
         }
     }
 }
+fun pay(context:Context,email:String,num:String,cvv:String,name:String){
+    var message =""
+    if(validateEmail(email)&& checkLength(num,16)&&
+        (checkLength(cvv,3)||checkLength(cvv,4))&&
+        checkName(name)){
+        message = if(Random.nextInt(1,5)==1){
+            context.getString(R.string.error)
+        }else {
+            context.getString(R.string.success)
+        }
+    }else if(!validateEmail(email)){
+        message=context.getString(R.string.email_fail)
+    }else if(!checkLength(num,16)) {
+        message = context.getString(R.string.number_fail)
+    }else if(!(checkLength(cvv,3)||checkLength(cvv,4))) {
+        message = context.getString(R.string.cvv_fail)
+    }else if(!checkName(name)){
+        message= context.getString(R.string.name_fail)
+    }
+    Toast.makeText(context,message,Toast.LENGTH_SHORT).show()
+}
 
-fun pay(){
-    
+fun validateEmail(email:String):Boolean{
+    return email.isNotEmpty()&&Patterns.EMAIL_ADDRESS.matcher(email).matches()
+}
+
+fun checkLength(text:String,len:Int):Boolean{
+    return text.length==len
+}
+
+fun checkName(text:String):Boolean{
+    return text.contains(Regex("[A-Za-z]"))
 }
 
 @Composable
 fun Content(modifier: Modifier){
+    val context= LocalContext.current
+
     var cardNum by remember {
         mutableStateOf("")
     }
@@ -185,19 +242,20 @@ fun Content(modifier: Modifier){
         mutableFloatStateOf(Random.nextInt(100,5000)+Random.nextInt(0,100).toFloat()/100)
     }
     Column(
-        modifier = modifier.padding(20.dp)
+        modifier = modifier.padding(horizontal=20.dp)
     ){
         Text(
             text = stringResource(id = R.string.total),
             fontSize = 20.sp,
-            fontWeight = FontWeight.Bold
+            fontWeight = FontWeight.Bold,
+            modifier=Modifier.padding(vertical=5.dp)
         )
         Text(
             text = "$$total",
             fontSize = 35.sp,
             fontWeight = FontWeight.Bold,
             color=Color.DarkGray,
-            modifier= Modifier.padding(vertical=10.dp)
+            modifier= Modifier.padding(vertical=5.dp)
         )
         Text(
             text=stringResource(id = R.string.select),
@@ -205,14 +263,29 @@ fun Content(modifier: Modifier){
             modifier= Modifier.padding(vertical=10.dp)
         )
         SelectCard()
-        TextBox(label = R.string.card_num,
-            keyboardsOptions = KeyboardOptions.Default.copy(
-                keyboardType = KeyboardType.Number,
-                imeAction = ImeAction.Done
-            ),
-            value = cardNum,
-            onValueChanged = {cardNum=it},
-            modifier=modifier.fillMaxWidth())
+        Box(
+            modifier= Modifier
+                .fillMaxWidth()
+                .wrapContentSize()
+        ) {
+            TextBox(
+                label = R.string.card_num,
+                keyboardsOptions = KeyboardOptions.Default.copy(
+                    keyboardType = KeyboardType.Number,
+                    imeAction = ImeAction.Done,
+                ),
+                value = cardNum,
+                onValueChanged = {
+                    if (it.length <= 16) cardNum = it
+                },
+            )
+            Image(painter = painterResource(id = R.drawable.mastercard), contentDescription = null,
+                modifier=Modifier.size(60.dp)
+                    .align(Alignment.CenterEnd)
+                    .padding(end=10.dp)
+            )
+
+        }
         Spacer(modifier = Modifier.height(20.dp))
         Row(
             modifier = Modifier.fillMaxWidth(),
@@ -224,7 +297,9 @@ fun Content(modifier: Modifier){
                     imeAction = ImeAction.Done
                 ),
                 value = cardDate,
-                onValueChanged = {cardDate=it},
+                onValueChanged = {
+                    if (it.length <= 5) cardDate = it
+                },
                 modifier = Modifier.width(150.dp))
             TextBox(label = R.string.CVV,
                 keyboardsOptions = KeyboardOptions.Default.copy(
@@ -232,14 +307,17 @@ fun Content(modifier: Modifier){
                     imeAction = ImeAction.Done
                 ),
                 value = cardCVV,
-                onValueChanged = {cardCVV=it},
+                onValueChanged = {
+                    if(it.length<=4) cardCVV=it
+                },
                 modifier = Modifier.width(150.dp))
         }
 
         Spacer(modifier = Modifier.height(22.dp))
         Text(
             text = stringResource(id = R.string.nameinfo),
-            fontSize=18.sp
+            fontSize=18.sp,
+            lineHeight = 10.sp
         )
         TextBox(label = R.string.name,
             keyboardsOptions = KeyboardOptions.Default.copy(
@@ -254,27 +332,26 @@ fun Content(modifier: Modifier){
         Text(
             text = stringResource(id = R.string.contact),
             fontSize=18.sp,
+            lineHeight = 10.sp
         )
-        TextBox(label = R.string.mail,
+        TextBox(
+            label = R.string.mail,
             keyboardsOptions = KeyboardOptions.Default.copy(
                 keyboardType = KeyboardType.Email,
-                imeAction = ImeAction.Done
+                imeAction = ImeAction.Done,
             ),
             value = email,
-            onValueChanged = {email=it},
-            modifier = Modifier
-                .fillMaxWidth()
-                .size(50.dp)
+            onValueChanged = { email = it },
         )
-        //Spacer(modifier = Modifier.height(90.dp))
         Row(
             modifier=Modifier.fillMaxWidth(),
             horizontalArrangement = Arrangement.Center
         ){
                 Button(
-                    onClick = {pay()},
-                    modifier=Modifier.padding(vertical=35.dp)
-                        .size(210.dp,50.dp)
+                    onClick = {pay(context,email,cardNum,cardCVV,cardName)},
+                    modifier= Modifier
+                        .padding(vertical = 70.dp)
+                        .size(210.dp, 50.dp)
                 ) {
                     Text(
                         stringResource(id = R.string.proceed),
