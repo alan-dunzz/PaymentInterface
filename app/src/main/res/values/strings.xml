@@ -18,4 +18,5 @@
     <string name="cvv_fail">CVV inválido</string>
     <string name="name_fail">Nombre inválido</string>
     <string name="error">Ocurrió un error</string>
+    <string name="date_fail">Fecha inválida</string>
 </resources>

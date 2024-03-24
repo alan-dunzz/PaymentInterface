@@ -164,7 +164,6 @@ fun SelectCard(){
                             card = "Visa"
                             isExpanded = false
                         }
-                        //{painterResource(id = R.drawable.visa) }
                     )
                     DropdownMenuItem(
                         text = { Text(text = "MasterCard") },
@@ -185,11 +184,12 @@ fun SelectCard(){
         }
     }
 }
-fun pay(context:Context,email:String,num:String,cvv:String,name:String){
+fun pay(context:Context,email:String,num:String,cvv:String,name:String,date:String){
     var message =""
     if(validateEmail(email)&& checkLength(num,16)&&
         (checkLength(cvv,3)||checkLength(cvv,4))&&
-        checkName(name)){
+        checkName(name)&&
+        checkDate(date)){
         message = if(Random.nextInt(1,5)==1){
             context.getString(R.string.error)
         }else {
@@ -204,6 +204,9 @@ fun pay(context:Context,email:String,num:String,cvv:String,name:String){
     }else if(!checkName(name)){
         message= context.getString(R.string.name_fail)
     }
+    else if(!checkDate(date)){
+        message= context.getString(R.string.date_fail)
+    }
     Toast.makeText(context,message,Toast.LENGTH_SHORT).show()
 }
 
@@ -217,6 +220,16 @@ fun checkLength(text:String,len:Int):Boolean{
 
 fun checkName(text:String):Boolean{
     return text.contains(Regex("[A-Za-z]"))
+}
+
+fun checkDate(text: String):Boolean{
+    return if(text.isNotEmpty()&&text.length==5) {
+        val month = (text.substring(0, 2)).toInt()
+        val year = (text.substring(3, 5)).toInt()
+        (month in 1..12 && year in 24..50 && !(month < 4 && year == 24))
+    }else{
+        false
+    }
 }
 
 @Composable
@@ -276,13 +289,16 @@ fun Content(modifier: Modifier){
                 ),
                 value = cardNum,
                 onValueChanged = {
-                    if (it.length <= 16) cardNum = it
+                    val number=it
+                    val trimmed = number.replace(Regex("[^\\d]"), "")
+                    if (it.length <= 16) cardNum = trimmed
                 },
             )
             Image(painter = painterResource(id = R.drawable.mastercard), contentDescription = null,
-                modifier=Modifier.size(60.dp)
+                modifier= Modifier
+                    .size(60.dp)
                     .align(Alignment.CenterEnd)
-                    .padding(end=10.dp)
+                    .padding(end = 10.dp)
             )
 
         }
@@ -298,7 +314,20 @@ fun Content(modifier: Modifier){
                 ),
                 value = cardDate,
                 onValueChanged = {
-                    if (it.length <= 5) cardDate = it
+                    newDate ->
+                   val formattedDate = if (newDate.length <= 5) {
+                       val trimmed = newDate.replace(Regex("[^\\d]"), "")
+                       if (trimmed.length >= 2 && !trimmed.contains("/")) {
+                           val month = trimmed.substring(0, 2)
+                           val year = if (trimmed.length >= 4) trimmed.substring(2, 4) else trimmed.substring(2)
+                           "$month/$year"
+                       } else {
+                           trimmed
+                       }
+                   } else {
+                       cardDate
+                   }
+                   cardDate = formattedDate
                 },
                 modifier = Modifier.width(150.dp))
             TextBox(label = R.string.CVV,
@@ -308,7 +337,9 @@ fun Content(modifier: Modifier){
                 ),
                 value = cardCVV,
                 onValueChanged = {
-                    if(it.length<=4) cardCVV=it
+                    val cvv=it
+                    val trimmed = cvv.replace(Regex("[^\\d]"), "")
+                    if(it.length<=4) cardCVV=trimmed
                 },
                 modifier = Modifier.width(150.dp))
         }
@@ -348,7 +379,7 @@ fun Content(modifier: Modifier){
             horizontalArrangement = Arrangement.Center
         ){
                 Button(
-                    onClick = {pay(context,email,cardNum,cardCVV,cardName)},
+                    onClick = {pay(context,email,cardNum,cardCVV,cardName,cardDate)},
                     modifier= Modifier
                         .padding(vertical = 70.dp)
                         .size(210.dp, 50.dp)
