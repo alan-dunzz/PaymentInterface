@@ -1,5 +1,6 @@
 package com.example.ejercicio1cm
 
+import android.annotation.SuppressLint
 import android.content.Context
 import android.os.Bundle
 import android.util.Patterns
@@ -115,12 +116,15 @@ private fun TextBox(
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
-fun SelectCard(){
+fun selectCard():String{
     var isExpanded by remember {
         mutableStateOf(false)
     }
     var card by remember {
         mutableStateOf("")
+    }
+    var showCard by remember {
+        mutableStateOf("blank")
     }
     Row(
         verticalAlignment = Alignment.CenterVertically,
@@ -145,7 +149,7 @@ fun SelectCard(){
                 modifier=Modifier.size(160.dp,50.dp)
             ) {
                 TextField(
-                    value = card,
+                    value =  card,
                     onValueChange = {},
                     readOnly = true,
                     trailingIcon = {
@@ -162,6 +166,7 @@ fun SelectCard(){
                         text = { Text(text = "Visa") },
                         onClick = {
                             card = "Visa"
+                            showCard="visa"
                             isExpanded = false
                         }
                     )
@@ -169,6 +174,7 @@ fun SelectCard(){
                         text = { Text(text = "MasterCard") },
                         onClick = {
                             card = "MasterCard"
+                            showCard="mastercard"
                             isExpanded = false
                         }
                     )
@@ -176,6 +182,7 @@ fun SelectCard(){
                         text = { Text(text = "American Express") },
                         onClick = {
                             card = "Amex"
+                            showCard="american_express"
                             isExpanded = false
                         }
                     )
@@ -183,13 +190,15 @@ fun SelectCard(){
             }
         }
     }
+    return showCard
 }
-fun pay(context:Context,email:String,num:String,cvv:String,name:String,date:String){
+fun pay(context:Context,email:String,num:String,cvv:String,name:String,date:String,selectedCard:String){
     var message =""
     if(validateEmail(email)&& checkLength(num,16)&&
         (checkLength(cvv,3)||checkLength(cvv,4))&&
         checkName(name)&&
-        checkDate(date)){
+        checkDate(date)&&
+        selectedCard!="blank"){
         message = if(Random.nextInt(1,5)==1){
             context.getString(R.string.error)
         }else {
@@ -203,9 +212,10 @@ fun pay(context:Context,email:String,num:String,cvv:String,name:String,date:Stri
         message = context.getString(R.string.cvv_fail)
     }else if(!checkName(name)){
         message= context.getString(R.string.name_fail)
-    }
-    else if(!checkDate(date)){
+    } else if(!checkDate(date)){
         message= context.getString(R.string.date_fail)
+    }else if(selectedCard=="blank"){
+        message= context.getString(R.string.selection_fail)
     }
     Toast.makeText(context,message,Toast.LENGTH_SHORT).show()
 }
@@ -232,6 +242,7 @@ fun checkDate(text: String):Boolean{
     }
 }
 
+@SuppressLint("DiscouragedApi")
 @Composable
 fun Content(modifier: Modifier){
     val context= LocalContext.current
@@ -249,6 +260,9 @@ fun Content(modifier: Modifier){
         mutableStateOf("")
     }
     var email by remember {
+        mutableStateOf("")
+    }
+    var selectedCard by remember {
         mutableStateOf("")
     }
     val total by remember{
@@ -275,7 +289,7 @@ fun Content(modifier: Modifier){
             fontSize=18.sp,
             modifier= Modifier.padding(vertical=10.dp)
         )
-        SelectCard()
+        selectedCard=selectCard()
         Box(
             modifier= Modifier
                 .fillMaxWidth()
@@ -290,17 +304,20 @@ fun Content(modifier: Modifier){
                 value = cardNum,
                 onValueChanged = {
                     val number=it
-                    val trimmed = number.replace(Regex("[^\\d]"), "")
+                    val trimmed = number.replace(Regex("\\D"), "")
                     if (it.length <= 16) cardNum = trimmed
                 },
             )
-            Image(painter = painterResource(id = R.drawable.mastercard), contentDescription = null,
-                modifier= Modifier
-                    .size(60.dp)
-                    .align(Alignment.CenterEnd)
-                    .padding(end = 10.dp)
-            )
-
+            if(selectedCard!="blank") {
+                val resourceId = context.resources.getIdentifier(selectedCard, "drawable", context.packageName)
+                Image(
+                    painter = painterResource(id = resourceId), contentDescription = null,
+                    modifier = Modifier
+                        .size(60.dp)
+                        .align(Alignment.CenterEnd)
+                        .padding(end = 10.dp)
+                )
+            }
         }
         Spacer(modifier = Modifier.height(20.dp))
         Row(
@@ -316,7 +333,7 @@ fun Content(modifier: Modifier){
                 onValueChanged = {
                     newDate ->
                    val formattedDate = if (newDate.length <= 5) {
-                       val trimmed = newDate.replace(Regex("[^\\d]"), "")
+                       val trimmed = newDate.replace(Regex("\\D"), "")
                        if (trimmed.length >= 2 && !trimmed.contains("/")) {
                            val month = trimmed.substring(0, 2)
                            val year = if (trimmed.length >= 4) trimmed.substring(2, 4) else trimmed.substring(2)
@@ -338,7 +355,7 @@ fun Content(modifier: Modifier){
                 value = cardCVV,
                 onValueChanged = {
                     val cvv=it
-                    val trimmed = cvv.replace(Regex("[^\\d]"), "")
+                    val trimmed = cvv.replace(Regex("\\D"), "")
                     if(it.length<=4) cardCVV=trimmed
                 },
                 modifier = Modifier.width(150.dp))
@@ -379,7 +396,7 @@ fun Content(modifier: Modifier){
             horizontalArrangement = Arrangement.Center
         ){
                 Button(
-                    onClick = {pay(context,email,cardNum,cardCVV,cardName,cardDate)},
+                    onClick = {pay(context,email,cardNum,cardCVV,cardName,cardDate,selectedCard)},
                     modifier= Modifier
                         .padding(vertical = 70.dp)
                         .size(210.dp, 50.dp)

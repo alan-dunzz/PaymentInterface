@@ -19,4 +19,5 @@
     <string name="name_fail">Nombre inválido</string>
     <string name="error">Ocurrió un error</string>
     <string name="date_fail">Fecha inválida</string>
+    <string name="selection_fail">Tarjeta no seleccionada</string>
 </resources>
