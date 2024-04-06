@@ -3,10 +3,10 @@
     <string name="title">Información de pago\n</string>
     <string name="select">Selecciona el método de pago:</string>
     <string name="card_num">Número de la tarjeta</string>
-    <string name="CVV">***</string>
-    <string name="date">MM/YY</string>
+    <string name="CVV" translatable="false">***</string>
+    <string name="date" translatable="false">MM/YY</string>
     <string name="contact">Información de contacto\n</string>
-    <string name="mail">example@mail.com\n</string>
+    <string name="mail" translatable="false">example@mail.com\n</string>
     <string name="proceed">Realizar pago\n</string>
     <string name="total">Total a pagar:\n</string>
     <string name="nameinfo">Nombre</string>
@@ -20,4 +20,12 @@
     <string name="error">Ocurrió un error</string>
     <string name="date_fail">Fecha inválida</string>
     <string name="selection_fail">Tarjeta no seleccionada</string>
+    <string name="visa" translatable="false">Visa</string>
+    <string name="mastercard" translatable="false">MasterCard</string>
+    <string name="american_express" translatable="false">American Express</string>
+    <string name="amex" translatable="false">Amex</string>
+    <string name="payment_success">¡Pago exitoso!</string>
+    <string name="transaction_id">ID de transacción: %1$s</string>
+    <string name="total_success" translatable="false">"Total: "</string>
+    <string name="success_name">Pagado por:</string>
 </resources>

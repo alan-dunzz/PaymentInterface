@@ -1,0 +1,24 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string name="app_name">Assignment 1 CM</string>
+    <string name="title">Payment info</string>
+    <string name="select">Select payment method:</string>
+    <string name="card_num">Card number</string>
+    <string name="contact">Contact info</string>
+    <string name="proceed">Proceed</string>
+    <string name="total">Total:</string>
+    <string name="nameinfo">Name:</string>
+    <string name="name">Name on the card</string>
+    <string name="credit_card_rd">Credit card</string>
+    <string name="success">Payment successful</string>
+    <string name="number_fail">Invalid card number</string>
+    <string name="email_fail">Invalid e mail</string>
+    <string name="cvv_fail">Invalid CVV</string>
+    <string name="name_fail">Invalid name</string>
+    <string name="error">An error occurred</string>
+    <string name="date_fail">Invalid date</string>
+    <string name="selection_fail">Card not selected</string>
+    <string name="payment_success">Payment successful!</string>
+    <string name="transaction_id">Transaction ID: %1$s</string>
+    <string name="success_name">Payed by:</string>
+</resources>
